@@ -32,7 +32,7 @@ module.exports = {
         },
       },
       {
-        test: /\.(js|jsx)$/, // Обрабатываем .js и .jsx файлы
+        test: /\.(js|jsx)$/,
         exclude: /node_modules/,
         use: {
           loader: "babel-loader",
@@ -48,15 +48,24 @@ module.exports = {
           loader: "babel-loader",
         },
       },
+      {
+        test: /\.(png|jpe?g|gif|svg|ico)$/i,
+        use: [
+          {
+            loader: 'file-loader',
+          },
+        ],
+      }
     ],
   },
   plugins: [
     new HtmlWebpackPlugin({
-      template: "./index.html",
+      template: "./index.html", 
+      inject: true,
     }),
     new BrowserSyncPlugin({
       host: "localhost",
-      port: 3000,
+      port: 8080,
       proxy: "http://127.0.0.1:8080/",
       notify: true,
     }),
@@ -65,7 +74,15 @@ module.exports = {
     static: {
       directory: path.join(__dirname, "./src"),
     },
+    historyApiFallback: true,
     compress: true,
     port: 8080,
+    proxy: [
+      {
+        context: ['/api'],
+        target: 'http://localhost:3000',
+        changeOrigin: true,
+      },
+    ],
   },
 };
