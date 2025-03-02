@@ -1,0 +1,13 @@
+body{
+    background-color: rgb(225, 225, 225);
+}
+
+.statsContainer{
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    flex-direction: column;
+    padding-left: 10vw;
+    width: 88vw;
+    height: 100vh;
+}

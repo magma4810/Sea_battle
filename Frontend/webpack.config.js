@@ -14,8 +14,23 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.css$/i,
-        use: ["style-loader", "css-loader"],
+        test: /\.module\.css$/,
+        use: [
+          'style-loader',
+          {
+            loader: 'css-loader',
+            options: {
+              modules: {
+                localIdentName: '[name]__[local]__[hash:base64:5]',
+              },
+            },
+          },
+        ],
+      },
+      {
+        test: /\.css$/, // Обрабатывает обычные CSS файлы
+        use: ['style-loader', 'css-loader'],
+        exclude: /\.module\.css$/, // Исключает CSS-модули
       },
       {
         test: /\.html$/,
@@ -55,12 +70,12 @@ module.exports = {
             loader: 'file-loader',
           },
         ],
-      }
+      },
     ],
   },
   plugins: [
     new HtmlWebpackPlugin({
-      template: "./index.html", 
+      template: "./index.html",
       inject: true,
     }),
     new BrowserSyncPlugin({
@@ -82,6 +97,8 @@ module.exports = {
         context: ['/api'],
         target: 'http://localhost:3000',
         changeOrigin: true,
+        secure: false,
+        timeout: 10000,
       },
     ],
   },
