@@ -1,0 +1,13 @@
+.permissionDenied{
+    color: rgba(93, 125, 255, 0.71);
+    font-size: 5vw;
+}
+
+.permissionDeniedContainer{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    width: 88vw;
+    height: 100vh;
+}

@@ -18,13 +18,12 @@ export function Stats() {
                 console.error('Error fetching session:', error);
             });
     }, []);
-
     return (
         <>
             {loading ? <></> : <div className={styles.statsContainer}>
                 <h1 className='headerStats'>Your Profile:</h1>
-                <span>Nickname: {user ? user.username : 'Гость'}</span>
-                <span>{user ? `Password: ${user.username}` : <></>}</span>
+                <span>Nickname: {user ? user.nickname : 'Гость'}</span>
+                <span>{user ? `Password: ${user.password}` : <></>}</span>
 
             </div>}
         </>

@@ -16,21 +16,6 @@ class UserController{
             res.status(500).json({ error: 'Ошибка при добавлении нового пользователя' });
         }
     }
-    // async getUser(req,res){
-    //     const id = req.params.id;
-    //     try {
-    //         const [getUser, metadata] = await sequelize.query(
-    //             'select * from "Users" where id =:id',
-    //             { 
-    //                 replacements: {id} 
-    //             } 
-    //         );
-    //         res.json(getUser);
-    //     } catch (error) {
-    //         console.error('Ошибка при получении данных пользователя:', error);
-    //         res.status(500).json({ error: 'Ошибка при получении данных пользователя' });
-    //     }
-    // }
 
     async getUserPassword(req,res){
         const login = req.params.login;
@@ -45,6 +30,20 @@ class UserController{
         } catch (error) {
             console.error('Ошибка при получении данных пользователя', error);
             res.status(500).json({ error: 'Ошибка при получении данных пользователя' });
+        }
+    }
+    async getStatUsers(req,res){
+        try {
+            const [getWaiters, metadata] = await sequelize.query(
+                `select nickname,games,winrate from "Stats" order by winrate desc;`,
+                { 
+                    replacements: {} 
+                } 
+            );
+            res.json(getWaiters);
+        } catch (error) {
+            console.error('Ошибка при получении статистики пользователя', error);
+            res.status(500).json({ error: 'Ошибка при получении статистики пользователя' });
         }
     }
 }

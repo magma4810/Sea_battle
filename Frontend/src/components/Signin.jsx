@@ -52,7 +52,7 @@ async function signinClick(data) {
                 const password = passwordArray.password;
                 if (password === data.password) {
                     const userData = {
-                        username: data.username,
+                        nickname: data.username,
                         password: data.password,
                     }
                     await fetch(`/api/login`, {

@@ -1,6 +1,9 @@
 import * as styles from '../styles/Authenticatedpls.module.css';
+import Cookies from 'js-cookie';
 
-export function Authenticatedpls(){//поменять название классов
+export function Authenticatedpls({ isOpen, onClose }){//поменять название классов
+    Cookies.set('guest', 'true', 1);
+    if (!isOpen) return null;
     return (
         <div className={styles.bodySignin}>
             <div className={styles.signinContainer}>
@@ -10,6 +13,9 @@ export function Authenticatedpls(){//поменять название клас�
                 </div>
                 <div className={styles.signinContainerHeader}>
                     <h1>Для начала пройдите авторизацию!</h1>
+                </div>
+                <div className={styles.signinContainerHeader}>
+                    <a onClick={onClose} className={styles.guest}>Или продолжите как Гость</a>
                 </div>
                 <div className={styles.main}>
                     <div className={`${styles.authorizationButton} ${styles.size}`}>

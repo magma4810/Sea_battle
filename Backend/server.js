@@ -1,6 +1,7 @@
 const userRouter = require('./routes/user.routes');
 const express = require('express');
 const Users = require("./models/Users");
+const Stats = require("./models/Stats");
 const sequelize = require('./database');
 const PORT = 3000;
 const app = express();
@@ -31,9 +32,10 @@ app.use(
 
 app.post('/api/login', (req, res) => {
   res.cookie('authenticated', "true", { maxAge: 86400000, httpOnly: false }); 
-  const { username, password } = req.body;
+  const { nickname, password } = req.body;
+  res.cookie('nickname', nickname, { maxAge: 86400000, httpOnly: false }); 
   const user = {
-      username: username,
+      nickname: nickname,
       password: password,
   };
 
@@ -54,6 +56,7 @@ app.post('/api/login', (req, res) => {
 
 app.post('/api/logout', (req, res) => {
   res.clearCookie('authenticated', { path: '/', domain: 'example.com' });
+  res.clearCookie('guest', { path: '/', domain: 'example.com' });
   req.session.destroy((err) => {
       if (err) {
           return res.status(500).json({ success: false, message: 'Ошибка при выходе' });

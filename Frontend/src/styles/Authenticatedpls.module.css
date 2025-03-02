@@ -13,6 +13,12 @@
     margin: 0;
 }
 
+.guest{
+    font-size: 1.5vw;
+    border-bottom: thick double #32a1ce;
+    cursor: pointer;
+}
+
 .signinContainerHeader{
     font-size: 10px;
     display: flex;
