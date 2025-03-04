@@ -1,0 +1,52 @@
+.board{
+    display: grid;
+    grid-template-columns: repeat(10, 3vw);
+    grid-template-rows: repeat(10, 3vw);
+    gap: 1px;
+    box-shadow: 0 0 3vw rgba(66, 66, 246, 0.5);
+  }
+
+
+.seaBattleContainer{
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    height: 100vh;
+    width: 88vw;
+}
+
+
+.cell {
+    width: 100%;
+  height: 100%;
+  background-color: lightgray;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  border: 1px solid #000; /* Граница клетки */
+  position: relative; /* Для позиционирования картинки */
+  overflow: hidden; 
+
+  }
+
+  .cell img{
+    display: block;
+  }
+
+  .shipsContainer {
+    position: absolute;
+    top: 0.2%;
+    left: 0.2%;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-wrap: wrap; 
+    background-color: rgba(66, 66, 246, 0.2); 
+    backdrop-filter: blur(5px);
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.2); 
+  }
+
+  .cell.preview {
+    background-color: lightblue;
+  }

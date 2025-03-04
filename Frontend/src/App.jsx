@@ -3,6 +3,7 @@ import Signin from "./components/Signin";
 import Signup from "./components/Signup";
 import Notfound from "./components/Notfound";
 import BestPlayers from "./components/BestPlayers";
+import SeaBattle from "./components/SeaBattle";
 import { PermissionDenied } from "./components/PermissionDenied";
 import { Stats } from "./components/Stats";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
@@ -54,16 +55,19 @@ export default function App() {
     <>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<>
+          <Route path="/" element={<div style={{ display: "flex" }}>
             {loading ? <></> : isAuthenticated ? (
+              <>
               <Sidebar />
+              <SeaBattle/>
+              </>
             ) : (
               <>
                 <Sidebar />
                 {isGuest ? <></> : <Authenticatedpls isOpen={isModalOpen} onClose={closeModal} />}
               </>
             )}
-          </>} />
+          </div>} />
           <Route path="/bestPlayers" element={<div style={{ display: "flex" }}>
             <>
               {loading ? <></> : isAuthenticated ? (
