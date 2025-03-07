@@ -64,6 +64,7 @@ export default function App() {
             ) : (
               <>
                 <Sidebar />
+                <SeaBattle/>
                 {isGuest ? <></> : <Authenticatedpls isOpen={isModalOpen} onClose={closeModal} />}
               </>
             )}

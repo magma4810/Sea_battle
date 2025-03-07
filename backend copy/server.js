@@ -66,12 +66,6 @@ app.post('/api/logout', (req, res) => {
   });
 });
 
-// app.use((req, res, next) => {
-//   req.setTimeout(10000); // 10 секунд
-//   res.setTimeout(10000); // 10 секунд
-//   next();
-// });
-
 app.get('/api/check-session', (req, res) => {
     if (req.session.user) {
         res.json({ authenticated: true, user: req.session.user });
