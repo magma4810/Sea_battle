@@ -56,22 +56,22 @@ export function Stats() {
 
                         {/*Сколько кораблей уничтожил игрок*/}
                         <div className={styles.shipsAreReduced}>
-                            Уничтожено кораблей: 10
+                            Уничтожено кораблей: {user ? user.shipDestroyed : ' '}
                         </div>
 
                         {/*всего сыгранно игр*/}
                         <div className={styles.winRaid}>
-                            Всего сыгранно игр: 16
+                            Всего сыгранно игр: {user ? user.totalGamesPlayed : ' '}
                         </div>
 
                         {/*Сколько раз проиграл игрок*/}
                         <div className={styles.winRaid}>
-                            Число поражений: 6
+                            Число поражений: {user ? user.numberOfDefeats : ' '}
                         </div>
 
                         {/*Сколько одержал победу игрок*/}
                         <div className={styles.winRaid}>
-                            Число побед: 10
+                            Число побед: {user ? user.numberOfDefeats : ' '}
                         </div>
                     </div>
 
