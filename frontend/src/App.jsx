@@ -3,10 +3,11 @@ import Signin from "./components/Signin";
 import Signup from "./components/Signup";
 import Notfound from "./components/Notfound";
 import BestPlayers from "./components/BestPlayers";
-import {PermissionDenied} from "./components/PermissionDenied";
-import {Stats} from "./components/Stats";
-import {BrowserRouter, Routes, Route} from "react-router-dom";
-import {Authenticatedpls} from './components/Authenticatedpls';
+import SeaBattle from "./components/SeaBattle";
+import { PermissionDenied } from "./components/PermissionDenied";
+import { Stats } from "./components/Stats";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { Authenticatedpls } from './components/Authenticatedpls';
 import Cookies from 'js-cookie';
 import {useState, useEffect} from "react";
 
@@ -51,37 +52,38 @@ export default function App() {
 
     const closeModal = () => setIsModalOpen(false);
 
-    return (
-        <>
-            <BrowserRouter>
-                <Routes>
-                    <Route path="/" element={<>
-                        {loading ? <></> : isAuthenticated ? (
-                            <Sidebar/>
-                        ) : (
-                            <>
-                                <Sidebar/>
-                                {isGuest ? <></> : <Authenticatedpls isOpen={isModalOpen} onClose={closeModal}/>}
-                            </>
-                        )}
-                    </>
-                    }
-                    />
-                    <Route path="/bestPlayers" element={<div style={{display: "flex"}}>
-                        <>
-                            {loading ? <></> : isAuthenticated ? (
-                                <>
-                                    <Sidebar/>
-                                    <BestPlayers/>
-                                </>
-                            ) : (
-                                <>
-                                    <Sidebar/>
-                                    {isGuest ? <><PermissionDenied context={"Топ Лучших игроков"}/></> : <>
-                                        <Authenticatedpls isOpen={isModalOpen} onClose={closeModal}/><PermissionDenied
-                                        context={"Топ Лучших игроков"}/></>}
-                                </>
-                            )}
+  return (
+    <>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<div style={{ display: "flex" }}>
+            {loading ? <></> : isAuthenticated ? (
+              <>
+              <Sidebar />
+              <SeaBattle/>
+              </>
+            ) : (
+              <>
+                <Sidebar />
+                <SeaBattle/>
+                {isGuest ? <></> : <Authenticatedpls isOpen={isModalOpen} onClose={closeModal} />}
+              </>
+            )}
+          </div>} />
+          <Route path="/bestPlayers" element={<div style={{ display: "flex" }}>
+            <>
+              {loading ? <></> : isAuthenticated ? (
+                <>
+                  <Sidebar />
+                  <BestPlayers />
+                </>
+              ) : (
+                <>
+                  <Sidebar />
+                  {isGuest ? <><PermissionDenied context={"Топ Лучших игроков"} /></> : <><Authenticatedpls isOpen={isModalOpen} onClose={closeModal} /><PermissionDenied context={"Топ Лучших игроков"} /></>}
+                </>
+              )}
+
 
                         </>
                     </div>}/>

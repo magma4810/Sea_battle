@@ -38,6 +38,11 @@ module.exports = {
         login: 'paporotnik4810',
         password: 'paporotnik4810'
       },
+      {
+        nickname: 'emchous37127609919', 
+        login: 'emchous37127609919',
+        password: 'emchous37127609919'
+      },
     ], {});
   },
 

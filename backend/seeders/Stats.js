@@ -58,6 +58,14 @@ module.exports = {
         wins: 58,
         draw: 11,
         defeat: 30
+      },
+      {
+        nickname: 'emchous37127609919', 
+        games: 12392,
+        winrate: 91,
+        wins: 11311,
+        draw: 300,
+        defeat: 1081
       }
     ], {});
   },

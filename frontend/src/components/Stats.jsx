@@ -22,7 +22,6 @@ export function Stats() {
     return (
         <>
             {loading ? <></> : <div className={styles.statsContainer}>
-
                 <div className={styles.profile}>
                     {/*Пароль я не стал добавлять так как это не безопастно!!! */}
                     {/*<span>{user ? `Password: ${user.password}` : <></>}</span>*/}
