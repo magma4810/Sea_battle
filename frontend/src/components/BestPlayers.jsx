@@ -7,11 +7,6 @@ export default function BestPlayers() {
     const [nickname, setNickname] = useState("");
     const [loading, setLoading] = useState(true);
     const [input, setInput] = useState("");
-    // const hidePerson = informationAboutUsers.filter((person) =>
-    // (person.name + " " + person.surname)
-    //   .toLowerCase()
-    //   .includes(value.toLowerCase()),
-    // );
 
     useEffect(() => {
         const nickname = Cookies.get('nickname');

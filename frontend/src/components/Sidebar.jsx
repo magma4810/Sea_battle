@@ -1,4 +1,4 @@
-import { useLocation } from 'react-router-dom';
+import {NavLink, useLocation} from 'react-router-dom';
 import GameIcon from '../img/Game.png';
 import ProfileIcon from '../img/Profile.png';
 import BestPlayersIcon from '../img/BestPlayers.png';
@@ -21,27 +21,32 @@ export default function Sidebar(){
     const isActive = (path) => {
         return location.pathname === path;
     };
+
     return (
         <div className={styles.sidebar}>
+
             <div className={styles.gameInfo}>
-            <a
-                    href="/"
+                <NavLink
+                    to="/"
                     className={`${styles.icons} ${isActive('/') ? styles.active : ''}`}
                 >
                     <img src={GameIcon} alt="Game" />Game
-                </a>
-                <a
-                    href="/myStats"
+                </NavLink>
+
+                <NavLink
+                    to="/myStats"
                     className={`${styles.icons} ${isActive('/myStats') ? styles.active : ''}`}
                 >
                     <img src={ProfileIcon} alt="Profile" />Stats
-                </a>
-                <a
-                    href="/bestPlayers"
+                </NavLink>
+
+                <NavLink
+                    to="/bestPlayers"
                     className={`${styles.icons} ${isActive('/bestPlayers') ? styles.active : ''}`}
                 >
                     <img src={BestPlayersIcon} alt="Best Players" />Best players
-                </a>
+                </NavLink>
+
             </div>
             {loading ? <></> : isAuthenticated ? <Logout/> : <LoginButton/>}
         </div>

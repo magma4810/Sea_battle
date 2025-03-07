@@ -19,6 +19,7 @@ export function Stats() {
                 console.error('Error fetching session:', error);
             });
     }, []);
+
     return (
         <>
             {loading ? <></> : <div className={styles.statsContainer}>
