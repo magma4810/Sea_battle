@@ -61,17 +61,17 @@ export function Stats() {
 
                         {/*всего сыгранно игр*/}
                         <div className={styles.winRaid}>
-                            Всего сыгранно игр: {user ? user.totalGamesPlayed : ' '}
+                            Всего сыгранно игр: {user ? user.games : ' '}
                         </div>
 
                         {/*Сколько раз проиграл игрок*/}
                         <div className={styles.winRaid}>
-                            Число поражений: {user ? user.numberOfDefeats : ' '}
+                            Число поражений: {user ? user.defeat : ' '}
                         </div>
 
                         {/*Сколько одержал победу игрок*/}
                         <div className={styles.winRaid}>
-                            Число побед: {user ? user.numberOfDefeats : ' '}
+                            Число побед: {user ? user.wins : ' '}
                         </div>
                     </div>
 
