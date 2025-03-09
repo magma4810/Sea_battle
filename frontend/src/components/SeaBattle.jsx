@@ -2,6 +2,7 @@ import { GameBoard } from "./GameBoard";
 import { useState, useEffect } from "react";
 import { Button } from "./Button";
 import * as styles from "../styles/SeaBattle.module.css";
+import Cookies from 'js-cookie';
 
 export default function SeaBattle() {
   const ships = [
@@ -17,14 +18,14 @@ export default function SeaBattle() {
     { id: 10, size: 1, positions: [], placed: false, orientation: "horizontal", headX: null, headY: null },
   ];
 
-  const [shipsPlayer,setShipsPlayer] = useState([...ships]);
-  const [shipsBot,setShipsBot] = useState([...ships]);
+  const [shipsPlayer, setShipsPlayer] = useState([...ships]);
+  const [shipsBot, setShipsBot] = useState([...ships]);
   const [botShots, setBotShots] = useState([]);
   const [playerShots, setPlayerShots] = useState([]);
   const [lastHit, setLastHit] = useState(null);
   const [botShouldShootAgain, setBotShouldShootAgain] = useState(false);
   const [isPlayerTurn, setIsPlayerTurn] = useState(true);
-  const [gameIsRunning,setGameIsRunning] = useState(false);
+  const [gameIsRunning, setGameIsRunning] = useState(false);
   const [showBotShips, setShowBotShips] = useState(false);
 
   const createEmptyBoard = () => Array(10).fill().map(() => Array(10).fill(null));
@@ -33,14 +34,165 @@ export default function SeaBattle() {
   const [botBoard, setBotBoard] = useState(createEmptyBoard());
   const [allShipsPlaced, setAllShipsPlaced] = useState(false);
 
+  const [data, setData] = useState(null);
+
   useEffect(() => {
-    if(gameIsRunning){
+    const handleBeforeUnload = (event) => {
+      if (gameIsRunning && !isGameOver(shipsPlayer, playerShots) && !isGameOver(shipsBot, botShots)) {
+        localStorage.setItem("gameInterrupted", "true");
+      }
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, [gameIsRunning, shipsPlayer, shipsBot, playerShots, botShots]);
+
+  useEffect(() => {
+    let isMounted = true; 
+    const nickname = Cookies.get('nickname');
+    fetch(`/api/getStatUserByNickname/${nickname}`, {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json',
+      },
+    })
+      .then(response => response.json())
+      .then(data => {
+        if (!isMounted) return; 
+  
+        setData(data[0]);
+  
+        const gameInterrupted = localStorage.getItem("gameInterrupted");
+        if (gameInterrupted === "true") {
+  
+          fetch(`/api/updateDefeatAndWinrate/${nickname}`, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              games: data[0].games + 1,
+              defeat: data[0].defeat + 1,
+              winrate: 100 - ((data[0].defeat + 1) / (data[0].games + 1) * 100),
+            }),
+          })
+            .then(response => response.json())
+            .then(() => {
+              if (!isMounted) return; // Если компонент размонтирован, прекращаем выполнение
+              console.log('Статистика успешно обновлена');
+              localStorage.removeItem("gameInterrupted"); // Очищаем флаг
+              alert("Игра была прервана! Вы проиграли.");
+            })
+            .catch(error => {
+              if (!isMounted) return; // Если компонент размонтирован, прекращаем выполнение
+              console.error('Ошибка при обновлении статистики:', error);
+            });
+        }
+      })
+      .catch(error => {
+        if (!isMounted) return; // Если компонент размонтирован, прекращаем выполнение
+        console.error('Ошибка при получении статистики пользователя:', error);
+      });
+  
+    return () => {
+      isMounted = false; // Очистка при размонтировании компонента
+    };
+  }, []);
+
+  useEffect(() => {
+    if (gameIsRunning) {
       const timer = setTimeout(() => {
         botShoot();
       }, 500); // Задержка перед следующим выстрелом (можно настроить)
       return () => clearTimeout(timer); // Очистка таймера
     }
   }, [botShouldShootAgain]);
+
+  useEffect(() => {
+    const playerWin = isGameOver(shipsBot, botShots);
+    const botWin = isGameOver(shipsPlayer, playerShots);
+  
+    if ((playerWin || botWin) && gameIsRunning) {
+      const nickname = Cookies.get('nickname');
+  
+      // Получаем данные пользователя
+      
+  
+          // Подсчет уничтоженных кораблей
+          const destroyedShips = countDestroyedShips(playerShots);
+  
+          // Обновляем статистику
+          const updatedStats = {
+            games: data.games + 1,
+            winrate: playerWin 
+              ? ((data.wins + 1) / (data.games + 1) * 100)
+              : 100 - ((data.defeat + 1) / (data.games + 1) * 100),
+            wins: data.wins + (playerWin ? 1 : 0),
+            draw: data.draw,
+            defeat: data.defeat + (playerWin ? 0 : 1),
+            singleDeck: data.singleDeck + destroyedShips.singleDeck,
+            doubleDecker: data.doubleDecker + destroyedShips.doubleDecker,
+            threeDeck: data.threeDeck + destroyedShips.threeDeck,
+            fourDeck: data.fourDeck + destroyedShips.fourDeck,
+            shipsDestroyed: data.shipsDestroyed + destroyedShips.singleDeck 
+              + destroyedShips.doubleDecker + destroyedShips.threeDeck + destroyedShips.fourDeck,
+          };
+  
+          // Отправляем обновленную статистику на сервер
+          fetch(`/api/updateStatUserByNickname/${nickname}`, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(updatedStats),
+          })
+            .then(response => response.json())
+            .then(() => {
+              console.log('Статистика успешно обновлена');
+            })
+            .catch(error => {
+              console.error('Ошибка при обновлении статистики:', error);
+            });
+  
+          setGameIsRunning(false);
+          update();
+
+    }
+  }, [botShots, playerShots, gameIsRunning]);
+
+  const countDestroyedShips = (shots) => {
+    const destroyedShips = {
+      singleDeck: 0,
+      doubleDecker: 0,
+      threeDeck: 0,
+      fourDeck: 0,
+    };
+  
+    ships.forEach((ship) => {
+      if (isShipDestroyed(ship, shots)) {
+        switch (ship.size) {
+          case 1:
+            destroyedShips.singleDeck += 1;
+            break;
+          case 2:
+            destroyedShips.doubleDecker += 1;
+            break;
+          case 3:
+            destroyedShips.threeDeck += 1;
+            break;
+          case 4:
+            destroyedShips.fourDeck += 1;
+            break;
+          default:
+            break;
+        }
+      }
+    });
+  
+    return destroyedShips;
+  };
 
   useEffect(() => {
     const handleKeyDown = (event) => {
@@ -50,10 +202,10 @@ export default function SeaBattle() {
         setShowBotShips((prev) => !prev); // Переключаем видимость кораблей бота
       }
     };
-  
+
     // Добавляем обработчик события
     window.addEventListener('keydown', handleKeyDown);
-  
+
     // Удаляем обработчик при размонтировании компонента
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
@@ -168,12 +320,12 @@ export default function SeaBattle() {
     updatedShips.forEach((ship) => {
       placeSingleShip(ship);
     });
-    
+
     // Обновляем состояние
-    if(switchBoard === 'player'){
+    if (switchBoard === 'player') {
       setPlayerBoard(newBoard);
       setShipsPlayer(updatedShips);
-    }else{
+    } else {
       setBotBoard(newBoard);
       setShipsBot(updatedShips);
     }
@@ -181,7 +333,7 @@ export default function SeaBattle() {
   };
 
   const rotateShip = (shipId) => {
-    if(!allShipsPlaced){
+    if (!allShipsPlaced) {
       const updatedShips = shipsPlayer.map((ship) => {
         if (ship.id === shipId && ship.placed) {
           const newOrientation = ship.orientation === "vertical" ? "horizontal" : "vertical";
@@ -190,7 +342,7 @@ export default function SeaBattle() {
           ship.positions.forEach(({ x, y }) => {
             tempBoard[x][y] = null;
           });
-  
+
           // Проверяем, можно ли разместить корабль в новой ориентации
           // Игнорируем проверку соседних клеток (ignoreNeighbors = true)
           if (isPlacementValid(newPositions, playerBoard)) {
@@ -198,7 +350,7 @@ export default function SeaBattle() {
             newPositions.forEach(({ x, y }) => {
               tempBoard[x][y] = ship.id;
             });
-  
+
             setPlayerBoard(tempBoard); // Обновляем состояние поля
             return { ...ship, orientation: newOrientation, positions: newPositions };
           } else {
@@ -223,25 +375,25 @@ export default function SeaBattle() {
 
   const getSurroundingCells = (positions) => {
     const surroundingCells = new Set();
-  
+
     positions.forEach(({ x, y }) => {
       for (let dx = -1; dx <= 1; dx++) {
         for (let dy = -1; dy <= 1; dy++) {
           const nx = x + dx;
           const ny = y + dy;
-  
+
           // Пропускаем клетки за пределами поля
           if (nx < 0 || nx >= 10 || ny < 0 || ny >= 10) continue;
-  
+
           // Пропускаем клетки самого корабля
           if (positions.some((pos) => pos.x === nx && pos.y === ny)) continue;
-  
+
           // Добавляем клетку в Set
           surroundingCells.add(`${nx}-${ny}`);
         }
       }
     });
-  
+
     // Преобразуем Set в массив объектов { x, y }
     return Array.from(surroundingCells).map((cell) => {
       const [x, y] = cell.split("-").map(Number);
@@ -259,50 +411,47 @@ export default function SeaBattle() {
       alert("Вы уже стреляли в эту клетку!");
       return;
     }
-  
+
     const isHit = botBoard[x][y] !== null;
-  
+
     // Добавляем новый выстрел
     const newShot = { x, y, hit: isHit };
     const updatedBotShots = [...botShots, newShot];
     setBotShots(updatedBotShots);
-  
+
     // Если попали, проверяем, уничтожен ли корабль
     if (isHit) {
       const hitShip = shipsBot.find((ship) => ship.id === botBoard[x][y]);
       if (isShipDestroyed(hitShip, updatedBotShots)) {
         // Находим клетки вокруг корабля
         const surroundingCells = getSurroundingCells(hitShip.positions);
-  
+
         // Добавляем промахи вокруг корабля
         const newMisses = surroundingCells.map((cell) => ({
           x: cell.x,
           y: cell.y,
           hit: false,
         }));
-  
+
         setBotShots((prevShots) => [...prevShots, ...newMisses]);
       }
-    }else{
-      setIsPlayerTurn(false); 
-      setTimeout(() => {
-        botShoot();
-      }, 500); // Задержка перед выстрелом бота (можно настроить)
-      
+    } else {
+      setIsPlayerTurn(false);
+      if (gameIsRunning) {
+        setTimeout(() => {
+          botShoot();
+        }, 500); // Задержка перед следующим выстрелом (можно настроить)
+        // return () => clearTimeout(timer); // Очистка таймера
+      }
     }
 
-      
+
     // Проверяем, закончилась ли игра
-    if (isGameOver(shipsBot, botShots)) {
-      alert("Игрок победил!");
-    } else if (isGameOver(shipsPlayer, playerShots)) {
-      alert("Бот победил!");
-    } 
   };
 
   const botShoot = () => {
     let x, y;
-  
+
     // Если есть последнее попадание, стреляем в соседние клетки
     if (lastHit) {
       const directions = [
@@ -311,12 +460,12 @@ export default function SeaBattle() {
         { dx: 0, dy: 1 },  // вправо
         { dx: 0, dy: -1 }, // влево
       ];
-  
+
       // Пробуем стрелять в соседние клетки
       for (const { dx, dy } of directions) {
         x = lastHit.x + dx;
         y = lastHit.y + dy;
-  
+
         // Проверяем, что клетка в пределах поля и в нее еще не стреляли
         if (
           x >= 0 && x < 10 &&
@@ -327,12 +476,12 @@ export default function SeaBattle() {
         }
       }
     }
-  
+
     // Если lastHit === null или не удалось найти соседнюю клетку, стреляем случайно
     if (!lastHit || playerShots.some((shot) => shot.x === x && shot.y === y)) {
       let attempts = 0;
       const maxAttempts = 100;
-  
+
       do {
         x = Math.floor(Math.random() * 10);
         y = Math.floor(Math.random() * 10);
@@ -341,31 +490,31 @@ export default function SeaBattle() {
         playerShots.some((shot) => shot.x === x && shot.y === y) &&
         attempts < maxAttempts
       );
-  
+
       if (attempts >= maxAttempts) {
         console.error("Бот не смог найти клетку для выстрела!");
         return;
       }
     }
-  
+
     // Проверяем, попал ли бот в корабль
     const isHit = playerBoard[x][y] !== null;
-  
+
     // Добавляем новый выстрел
     const newShot = { x, y, hit: isHit };
     const updatedPlayerShots = [...playerShots, newShot];
     setPlayerShots(updatedPlayerShots);
-  
+
     // Если попал, обновляем lastHit
     if (isHit) {
       setLastHit({ x, y });
-  
+
       // Проверяем, уничтожен ли корабль
       const hitShip = shipsPlayer.find((ship) => ship.id === playerBoard[x][y]);
       if (hitShip && isShipDestroyed(hitShip, updatedPlayerShots)) {
         // Корабль уничтожен, сбрасываем lastHit
         setLastHit(null);
-  
+
         // Добавляем промахи вокруг корабля
         const surroundingCells = getSurroundingCells(hitShip.positions);
         const newMisses = surroundingCells.map((cell) => ({
@@ -375,7 +524,7 @@ export default function SeaBattle() {
         }));
         setPlayerShots((prevShots) => [...prevShots, ...newMisses]);
       }
-  
+
       // Указываем, что бот должен сделать еще один выстрел
       setBotShouldShootAgain(!botShouldShootAgain);
     } else {
@@ -385,15 +534,6 @@ export default function SeaBattle() {
 
     }
   };
-  const isGameOver = (ships, shots) => {
-    return ships.every((ship) =>
-      ship.positions.every((pos) =>
-        shots.some((shot) => shot.x === pos.x && shot.y === pos.y && shot.hit)
-      )
-    );
-  };
-  
-
 
   const calculateNewPositions = (ship, newOrientation) => {
     const { headX, headY, size } = ship;
@@ -465,6 +605,44 @@ export default function SeaBattle() {
     setAllShipsPlaced(false);
   };
 
+  const update = () => {
+    // Сброс кораблей игрока и бота
+    setShipsPlayer([...ships]);
+    setShipsBot([...ships]);
+
+    // Сброс выстрелов игрока и бота
+    setPlayerShots([]);
+    setBotShots([]);
+
+    // Сброс последнего попадания и флага для выстрела бота
+    setLastHit(null);
+    setBotShouldShootAgain(false);
+
+    // Сброс хода игрока и состояния игры
+    setIsPlayerTurn(true);
+    setGameIsRunning(false);
+
+    // Сброс видимости кораблей бота
+    setShowBotShips(false);
+
+    // Сброс полей игрока и бота
+    setPlayerBoard(createEmptyBoard());
+    setBotBoard(createEmptyBoard());
+
+    // Сброс флага размещения кораблей
+    setAllShipsPlaced(false);
+
+    localStorage.removeItem("gameInterrupted");
+  };
+
+  const isGameOver = (ships, shots) => {
+    return ships.every((ship) =>
+      ship.positions.every((pos) =>
+        shots.some((shot) => shot.x === pos.x && shot.y === pos.y && shot.hit)
+      )
+    );
+  };
+
   const start = () => {
     if (shipsPlayer.every((ship) => ship.placed)) {
       setAllShipsPlaced(true);
@@ -485,22 +663,22 @@ export default function SeaBattle() {
         handleDragOver={handleDragOver}
         ships={shipsPlayer}
         shots={playerShots}
-        isBotBoard={false} 
-        showBotShips={showBotShips} 
+        isBotBoard={false}
+        showBotShips={showBotShips}
       />
 
       <div style={{ position: 'relative' }}>
-      <GameBoard
-        board={botBoard}
-        onCellClick={handleBotCellClick} // Обработчик выстрелов
-        onDrop={() => {}}
-        handleDragOver={() => {}}
-        ships={shipsBot}
-        shots={botShots} // Передаем выстрелы
-        isBotBoard={true} 
-        showBotShips={showBotShips} 
-      />
-        {(!allShipsPlaced && 
+        <GameBoard
+          board={botBoard}
+          onCellClick={handleBotCellClick} // Обработчик выстрелов
+          onDrop={() => { }}
+          handleDragOver={() => { }}
+          ships={shipsBot}
+          shots={botShots} // Передаем выстрелы
+          isBotBoard={true}
+          showBotShips={showBotShips}
+        />
+        {(!allShipsPlaced &&
           <div className={styles.shipsContainer}>
             <div className={styles.ships}>
               {shipsPlayer
@@ -515,9 +693,9 @@ export default function SeaBattle() {
 
             </div>
             <div className={styles.buttonsContainer}>
-              <Button onClick={resetShips} title={"Сбросить корабли"}/>
-              <Button onClick={() => autoPlaceShips('player')} title={"Авторазмещение"}/>
-              <Button onClick={() => start()} title={"Старт"}/>
+              <Button onClick={resetShips} title={"Сбросить корабли"} />
+              <Button onClick={() => autoPlaceShips('player')} title={"Авторазмещение"} />
+              <Button onClick={() => start()} title={"Старт"} />
             </div>
           </div>
         )}

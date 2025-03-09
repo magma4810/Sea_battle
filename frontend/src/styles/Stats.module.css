@@ -1,13 +1,49 @@
-body{
-    background-color: rgb(225, 225, 225);
+.statsBody{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 88vw;
+    height: 100vh;
 }
 
 .statsContainer{
     display: flex;
-    justify-content: flex-start;
-    align-items: flex-start;
+    justify-content: space-evenly;
+    align-items: center;
     flex-direction: column;
-    padding-left: 10vw;
-    width: 88vw;
-    height: 100vh;
+    width: 35vw;
+    height: 75vh;
+    border-radius: 3vw;
+    background-color: rgb(204, 238, 251);
+    box-shadow: 0 0 2vw rgba(66, 66, 246, 0.5);
+    border: 1px solid #ccc;
+}
+
+.imgProfile{
+    width: 12vw;
+    height: auto;
+    position: absolute;
+    top: 1vw;
+}
+
+.gameStats{
+    display: flex;
+    flex-direction: column;
+}
+
+.gameStats ul li{
+    display: flex;
+    align-items: center;
+    margin: 1vw;
+}
+
+.stat{
+    display: flex;
+    font-weight: 600;
+    flex-direction: row;
+    width: 80%;
+    height: 100%;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
 }

@@ -34,8 +34,8 @@
 .bestPlayersContainer ol{
     height: 70%;
     overflow-y: auto;
-    border: 0.3vw solid rgb(214, 214, 214);
-    background-color: rgb(214, 214, 214);
+    border: 0.3vw solid rgba(222, 246, 255, 0.533);
+    background-color: rgb(204, 238, 251);
     width: 45%;
     border-top: none;
     border-bottom-left-radius: 0.5vw;

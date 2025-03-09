@@ -35,6 +35,31 @@ module.exports = {
           defaultValue: 0,
           allowNull: false
         },
+        singleDeck:{
+          type: DataTypes.INTEGER,
+          defaultValue: 0,
+          allowNull: false
+        },
+        doubleDecker:{
+          type: DataTypes.INTEGER,
+          defaultValue: 0,
+          allowNull: false
+        },
+        threeDeck:{
+          type: DataTypes.INTEGER,
+          defaultValue: 0,
+          allowNull: false
+        },
+        fourDeck:{
+          type: DataTypes.INTEGER,
+          defaultValue: 0,
+          allowNull: false
+        },
+        shipsDestroyed:{
+          type: DataTypes.INTEGER,
+          defaultValue: 0,
+          allowNull: false
+        }
       });
     }
   };

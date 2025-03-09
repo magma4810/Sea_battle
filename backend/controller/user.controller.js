@@ -42,13 +42,13 @@ class UserController{
     async getUserPassword(req,res){
         const login = req.params.login;
         try {
-            const [getWaiters, metadata] = await sequelize.query(
+            const [getData, metadata] = await sequelize.query(
                 `select password from "Users" where login = :login;`,
                 { 
                     replacements: {login} 
                 } 
             );
-            res.json(getWaiters);
+            res.json(getData);
         } catch (error) {
             console.error('Ошибка при получении данных пользователя', error);
             res.status(500).json({ error: 'Ошибка при получении данных пользователя' });
@@ -56,18 +56,97 @@ class UserController{
     }
     async getStatUsers(req,res){
         try {
-            const [getWaiters, metadata] = await sequelize.query(
+            const [getData, metadata] = await sequelize.query(
                 `select nickname,games,winrate from "Stats" order by winrate desc;`,
                 { 
                     replacements: {} 
                 } 
             );
-            res.json(getWaiters);
+            res.json(getData);
         } catch (error) {
-            console.error('Ошибка при получении статистики пользователя', error);
-            res.status(500).json({ error: 'Ошибка при получении статистики пользователя' });
+            console.error('Ошибка при получении статистики пользователeй', error);
+            res.status(500).json({ error: 'Ошибка при получении статистики пользователей' });
         }
     }
+    async getStatUserByNickname(req,res){
+      const nickname = req.params.nickname;
+      try {
+          const [getData, metadata] = await sequelize.query(
+              `select * from "Stats" where nickname=:nickname;`,
+              { 
+                  replacements: {nickname} 
+              } 
+          );
+          res.json(getData);
+      } catch (error) {
+          console.error('Ошибка при получении статистики пользователя', error);
+          res.status(500).json({ error: 'Ошибка при получении статистики пользователя' });
+      }
+  }
+  async updateStatUserByNickname(req, res) {
+    const { games, winrate, wins, draw, defeat, singleDeck, doubleDecker, threeDeck, fourDeck, shipsDestroyed } = req.body;
+    const nickname = req.params.nickname;
+  
+    try {
+      const [getData, metadata] = await sequelize.query(
+        `UPDATE "Stats" 
+         SET games = :games, 
+             winrate = :winrate, 
+             wins = :wins, 
+             draw = :draw, 
+             defeat = :defeat, 
+             "singleDeck" = :singleDeck, 
+             "doubleDecker" = :doubleDecker, 
+             "threeDeck" = :threeDeck, 
+             "fourDeck" = :fourDeck, 
+             "shipsDestroyed" = :shipsDestroyed 
+         WHERE nickname = :nickname;`,
+        {
+          replacements: { 
+            nickname, 
+            games, 
+            winrate, 
+            wins, 
+            draw, 
+            defeat, 
+            singleDeck, 
+            doubleDecker, 
+            threeDeck, 
+            fourDeck, 
+            shipsDestroyed 
+          },
+        }
+      );
+  
+      res.json(getData);
+    } catch (error) {
+      console.error('Ошибка при изменении статистики пользователя', error);
+      res.status(500).json({ error: 'Ошибка при изменении статистики пользователя' });
+    }
+  }
+  async updateDefeatAndWinrate(req, res) {
+    const {games,winrate,defeat} = req.body;
+    const nickname = req.params.nickname;
+  
+    try {
+      const [getData, metadata] = await sequelize.query(
+        `UPDATE "Stats" SET games=:games, winrate = :winrate, defeat = :defeat WHERE nickname = :nickname;`,
+        {
+          replacements: { 
+            games,
+            winrate, 
+            defeat, 
+            nickname
+          },
+        }
+      );
+  
+      res.json(getData);
+    } catch (error) {
+      console.error('Ошибка при изменении статистики пользователя', error);
+      res.status(500).json({ error: 'Ошибка при изменении статистики пользователя' });
+    }
+  }
 }
 
 module.exports = new UserController();
