@@ -1,0 +1,15 @@
+.permissionDenied{
+    color: rgba(93, 125, 255, 0.71);
+    font-size: 5vw;
+    /* box-shadow: 0 0 3vw rgb(66, 66, 246); */
+    text-shadow: 0 0 5px rgb(62, 158, 255), 0 0 10px rgb(86, 170, 255), 0 0 20px rgb(86, 170, 255);
+}
+
+.permissionDeniedContainer{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    width: 88vw;
+    height: 100vh;
+}

@@ -1,0 +1,62 @@
+.bestPlayersContainer{
+
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    flex-direction: column;
+    height: 100vh;
+    width: 88vw;
+}
+
+
+
+.spanBestPlayers{
+    font-size: 3vw;
+    color: rgba(66, 66, 246, 0.749);
+}
+
+.bestPlayersInput{
+    height: 5vh;
+    width: 44.5%;
+}
+
+.cardPlayer{
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    margin: 1vw 1vw 1vw 1vw;
+    height: 10vh;
+    width: 80%;
+    background-color: rgba(206, 223, 250, 0.791);
+    border-radius: 1vw;
+}
+
+.bestPlayersContainer ol{
+    height: 70%;
+    overflow-y: auto;
+    border: 0.3vw solid rgba(222, 246, 255, 0.533);
+    background-color: rgb(204, 238, 251);
+    width: 45%;
+    border-top: none;
+    border-bottom-left-radius: 0.5vw;
+    border-bottom-right-radius: 0.5vw;
+}
+
+.itemList{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.active{
+    box-shadow: 0 0 2vw rgba(66, 66, 246, 0.5);
+    border: 1px solid #ccc;
+}
+
+.spanNotFound{
+    display: flex;
+    margin-top: 5vw;
+    justify-content: center;
+    font-size: 2vw;
+    color: rgba(66, 66, 246, 0.436);
+}

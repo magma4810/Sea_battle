@@ -1,0 +1,55 @@
+{
+  "scripts": {
+    "lint": "prettier --check src && eslint src",
+    "lint:fix": "prettier --write . && eslint . --fix",
+    "start": "webpack serve --mode development",
+    "build": "webpack --mode production",
+    "prepare": "husky install"
+  },
+  "proxy": "http://localhost:3000",
+  "dependencies": {
+    "browser-sync": "^2.29.3",
+    "browser-sync-webpack-plugin": "^2.3.0",
+    "cookie-parser": "^1.4.7",
+    "html-loader": "^5.1.0",
+    "html-webpack-plugin": "^5.6.3",
+    "js-cookie": "^3.0.5",
+    "prettier": "^3.4.2",
+    "react-css-modules": "^4.7.11",
+    "react-router-dom": "^7.2.0",
+    "typescript": "^5.7.3"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.26.9",
+    "@babel/preset-env": "^7.26.9",
+    "@babel/preset-react": "^7.26.3",
+    "@babel/preset-typescript": "^7.26.0",
+    "@eslint/js": "^9.19.0",
+    "ajv": "^8.17.1",
+    "babel-jest": "^29.7.0",
+    "babel-loader": "^9.2.1",
+    "copy-webpack-plugin": "^12.0.2",
+    "css-loader": "^7.1.2",
+    "eslint": "^9.19.0",
+    "eslint-plugin-jest": "^28.11.0",
+    "eslint-plugin-react": "^7.37.4",
+    "eslint-plugin-react-hooks": "^5.1.0",
+    "eslint-plugin-react-refresh": "^0.4.19",
+    "file-loader": "^6.2.0",
+    "globals": "^15.15.0",
+    "husky": "^9.1.7",
+    "identity-obj-proxy": "^3.0.0",
+    "lint-staged": "^15.4.3",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "style-loader": "^4.0.0",
+    "url-loader": "^4.1.1",
+    "webpack": "^5.97.1",
+    "webpack-cli": "^6.0.1",
+    "webpack-dev-server": "^5.2.0"
+  },
+  "lint-staged": {
+    "*.{ts,jsx}": "eslint --fix",
+    "*.{ts,css}": "prettier --write"
+  }
+}

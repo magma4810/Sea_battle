@@ -1,0 +1,106 @@
+.bodySignin{
+    position: fixed;
+    top: 0;
+    left: 0;
+    background-color: rgba(0, 0, 0, 0.5); /* Полупрозрачный черный цвет */
+    z-index: 1000;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0;
+    margin: 0;
+}
+
+.guest{
+    font-size: 1.5vw;
+    border-bottom: thick double #32a1ce;
+    cursor: pointer;
+}
+
+.signinContainerHeader{
+    font-size: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+input{
+    background-color: rgba(209, 209, 209, 0.432);
+    height: 50%;
+    width: 100%;
+    border-style: none;
+    border-radius: 3px;
+    padding-left: 15px;
+}
+
+.inputEnter{
+    height: 55%;
+    width: 100%;
+
+}
+p{
+    margin: 5px;
+}
+.main{
+    height: 100%;
+    width: 100%;
+    display: flex;
+    text-align: center;
+    justify-content: center;
+    padding-bottom: 6vh;
+    flex-direction: column;
+    align-items: center;
+}
+
+a{
+    text-decoration: none;
+    color: rgb(173, 173, 173);
+}
+
+.signinContainer{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    padding-top: 5vh;
+    background-color: rgb(255, 255, 255);
+    width: 25vw;
+    height: 45vh;
+    border-radius: 20px;
+}
+
+
+
+.authorizationButton{
+    margin-top: 3vw;
+    height: 30%;
+    background-color: rgb(23,143,235);
+    color: white;
+    border-radius: 7px;
+}
+
+.signinButton{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    border: none;
+    font: inherit;
+    color: inherit;
+    background-color: transparent;
+    cursor: pointer;
+}
+
+.imgSignin{
+    width: 6vw;
+    position: absolute;
+    top: 10vw;    
+}
+
+.size{
+    width: 80%;
+}
